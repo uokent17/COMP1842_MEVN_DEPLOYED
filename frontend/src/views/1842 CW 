@@ -1,0 +1,67 @@
+<template>
+    <div>
+      <h2 class="text-2xl font-semibold mb-4">Edit Item</h2>
+      <form @submit.prevent="updateItem" class="space-y-4">
+        <div>
+          <label class="block mb-1 font-medium">Name</label>
+          <input v-model="form.name" required class="w-full border rounded p-2" />
+        </div>
+  
+        <div>
+          <label class="block mb-1 font-medium">Description</label>
+          <input v-model="form.description" required class="w-full border rounded p-2" />
+        </div>
+  
+        <div>
+          <label class="block mb-1 font-medium">Language</label>
+          <input v-model="form.language" required class="w-full border rounded p-2" />
+        </div>
+  
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          Update
+        </button>
+      </form>
+    </div>
+  </template>
+  
+  <script>
+  import axios from 'axios'
+  
+  export default {
+    data() {
+      return {
+        form: {
+          name: '',
+          description: '',
+          language: ''
+        }
+      }
+    },
+    mounted() {
+      this.fetchItem()
+    },
+    methods: {
+      async fetchItem() {
+        try {
+          const id = this.$route.params.id
+          const res = await axios.get(`http://localhost:8000/api/items/${id}`)
+          this.form = res.data
+        } catch (err) {
+          console.error('Fetch failed:', err)
+        }
+      },
+      async updateItem() {
+        try {
+          const id = this.$route.params.id
+          await axios.put(`http://localhost:8000/api/items/${id}`, this.form)
+          alert('Item updated!')
+          this.$router.push('/')
+        } catch (err) {
+          console.error('Update failed:', err)
+          alert('Something went wrong.')
+        }
+      }
+    }
+  }
+  </script>
+  
